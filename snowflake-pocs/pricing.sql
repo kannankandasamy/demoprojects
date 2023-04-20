@@ -51,6 +51,15 @@ ORDER BY
 
 
 
+--storage costs billable per tb
+SELECT
+	date_trunc(MONTH, usage_date) AS usage_month ,
+	AVG( storage_bytes + stage_bytes + failsafe_bytes ) / POWER( 1024, 4 ) AS billable_tb
+FROM
+	storage_usage
+GROUP BY 1
+ORDER BY 1;
+
 
 --query to check failed logins
 SELECT
