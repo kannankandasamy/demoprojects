@@ -118,4 +118,11 @@ SELECT 9, 'Messi', '2000-04-05','Delhi' UNION ALL
 SELECT 10, 'Mbappe', '2000-02-05','Bangalore'
 ;
 
+DROP TABLE customer_demo;
 
+SELECT * FROM INFORMATION_SCHEMA.TABLE_STORAGE_METRICS WHERE TABLE_SCHEMA = 'MARKETING';
+
+UNDROP TABLE customer_demo;
+
+SELECT current_database();
+SELECT CURRENT_schema();
