@@ -1,0 +1,121 @@
+/*
+ * Script 	:	POC for Time travel on snowflake
+ * Author	:	Kannan Kandasamy
+ */
+
+USE DATABASE PERM_DB;
+USE WAREHOUSE PROCESS_WH;
+USE SCHEMA MARKETING;
+
+/*
+ *	Time travel - data protection life cycle
+ *	Property TIME_TRAVEL_RETENTION_PERIOD 0 to 90 based on editions
+ *	after that it will move to failsafe 
+ * 	Enterprise edition and above time travel can set upto 90 days
+ * 
+ */
+
+--setting retention period
+SHOW TABLES;
+
+CREATE OR REPLACE TABLE CUSTOMER_TT_DEMO (
+	CUST_ID 		INT,
+	CUST_NAME		VARCHAR(100),
+	ENROLL_DATE		DATE,
+	CUST_ADDRESS	VARCHAR(500)
+)
+data_retention_time_in_days = 10;
+
+
+SHOW TABLES;
+
+ALTER SCHEMA MARKETING SET data_retention_time_in_days = 15;
+
+
+CREATE OR REPLACE TABLE CUSTOMER_TT_DEMO1 (
+	CUST_ID 		INT,
+	CUST_NAME		VARCHAR(100),
+	ENROLL_DATE		DATE,
+	CUST_ADDRESS	VARCHAR(500)
+);
+
+
+CREATE OR REPLACE TRANSIENT TABLE CUSTOMER_TT_DEMO2 (
+	CUST_ID 		INT,
+	CUST_NAME		VARCHAR(100),
+	ENROLL_DATE		DATE,
+	CUST_ADDRESS	VARCHAR(500)
+);
+
+
+SHOW TABLES;
+
+CREATE OR REPLACE TEMPORARY TABLE CUSTOMER_TT_DEMO3 (
+	CUST_ID 		INT,
+	CUST_NAME		VARCHAR(100),
+	ENROLL_DATE		DATE,
+	CUST_ADDRESS	VARCHAR(500)
+);
+
+
+--Querying history of data
+
+
+CREATE OR REPLACE TABLE CUSTOMER_DEMO (
+	CUST_ID 		INT,
+	CUST_NAME		VARCHAR(100),
+	ENROLL_DATE		DATE,
+	CUST_ADDRESS	VARCHAR(500)
+);
+
+
+SELECT CURRENT_TIMESTAMP();
+
+ALTER SESSION SET TIMEZONE = 'UTC';
+
+SELECT CURRENT_TIMESTAMP();
+--2023-04-21 03:30:33.595 +0000
+
+INSERT INTO CUSTOMER_DEMO
+SELECT 1, 'Kohli', '2000-03-05','Chennai' UNION ALL
+SELECT 2, 'Sachin', '2000-03-05','Mumbai' UNION ALL
+SELECT 3, 'Rahul', '2000-02-05','Hydrabad'  
+;
+
+
+SELECT * FROM customer_demo;
+
+SELECT * FROM customer_demo
+BEFORE( TIMESTAMP => '2023-04-21 03:30:33.595 +0000'::TIMESTAMP );
+
+select current_timestamp();
+--2023-04-21 03:32:15.704 +0000
+
+INSERT INTO CUSTOMER_DEMO
+SELECT 4, 'Shreyas', '2000-06-05','Gujarat' UNION ALL
+SELECT 5, 'Hardik', '2000-08-05','Chennai' UNION ALL
+SELECT 6, 'Kumble', '2000-01-05','Mumbai' 
+;
+
+SELECT * FROM customer_demo
+BEFORE( TIMESTAMP => '2023-04-21 03:32:15.704 +0000'::TIMESTAMP );
+
+SELECT * FROM customer_demo
+at(offset => -60*1);
+
+SELECT * FROM customer_demo BEFORE(STATEMENT => '01abc4b9-0000-f017-0000-000151b23d99');
+
+update customer_demo set cust_address = 'Delhi'
+where cust_id = 1;
+
+SELECT * FROM customer_demo BEFORE(STATEMENT => '01abc4b7-0000-f011-0000-000151b24db1');
+
+
+INSERT INTO CUSTOMER_DEMO
+SELECT 7, 'Kapildev', '2000-09-05','Hydrabad' UNION ALL
+SELECT 8, 'Gavaskar', '2000-01-05','Cochin' UNION ALL
+SELECT 9, 'Messi', '2000-04-05','Delhi' UNION ALL
+SELECT 10, 'Mbappe', '2000-02-05','Bangalore'
+;
+
+
