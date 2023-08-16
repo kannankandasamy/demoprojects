@@ -6,7 +6,7 @@ show roles;
 show schemas;
 
 use role DEV_ROLE;
-use database sales_fact;
+use database SALES_DWH;
 use schema sales_schema;
 use warehouse small_elt_wh;
 
