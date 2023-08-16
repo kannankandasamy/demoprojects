@@ -27,6 +27,20 @@ grant role "SYSADMIN" to user testusr2;
 grant role "SECURITYADMIN" to user testusr2;
 grant role "USERADMIN" to user testusr2;
 
+
+--orgadmin
+
+use role accountadmin;
+use warehouse esmall_wh;
+
+create or replace user orgadminusr 
+    password = "********"
+    must_change_password = FALSE;
+
+grant usage on warehouse ESMALL_WH to role ORGADMIN;    
+grant role "ORGADMIN" to user orgadminusr;
+
+
 --DAC - Discretionary Access Control
 
     
