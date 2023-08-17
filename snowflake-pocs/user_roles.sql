@@ -102,5 +102,33 @@ grant role "QA_ROLE" to user qa1_usr;
 grant role "QA_ROLE" to user qa2_usr;
 
 
+--give manager team access to create databases and warehouses
 
+use role SYSADMIN;
+select current_account(), current_role();
 
+grant create warehouse on account to role "MGR_ROLE";
+grant create database on account to role "MGR_ROLE";
+
+select current_role();
+grant role MGR_ROLE to role ACCOUNTADMIN;
+grant execute task on account to role MGR_ROLE;
+
+show warehouses;
+
+-- run queries from user_roles_mgr.sql for creating database and related grants from manager role user
+
+use role securityadmin;
+create role TASKADMIN;
+
+use role ACCOUNTADMIN;
+grant execute task, execute managed task on account to role taskadmin;
+
+--This only allows devs and managers to create and resume tasks
+use role securityadmin;
+grant role taskadmin to role MGR_ROLE;
+grant role taskadmin to role DEV_ROLE;
+
+use role ACCOUNTADMIN;
+grant MONITOR EXECUTION on account to role TASKADMIN;
+grant role TASKADMIN to role ACCOUNTADMIN;
