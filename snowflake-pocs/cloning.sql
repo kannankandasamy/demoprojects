@@ -3,9 +3,16 @@
  * Author	:	Kannan Kandasamy
  */
 
-USE DATABASE PERM_DB;
-USE WAREHOUSE PROCESS_WH;
-USE SCHEMA MARKETING;
+USE DATABASE SALES_DWH;
+
+show warehouses;
+
+USE WAREHOUSE ESMALL_WH;
+
+show roles;
+
+use role DEV_ROLE;
+USE SCHEMA sales_schema;
 
 /*
  * cloned table will not affect original table
@@ -21,6 +28,7 @@ CREATE OR REPLACE TABLE CUSTOMER_DEMO2 (
 	CUST_ADDRESS	VARCHAR(500)
 );
 
+use warehouse SMALL_ELT_WH;
 
 INSERT INTO CUSTOMER_DEMO2
 SELECT 1, 'Kohli', '2000-03-05','Chennai' UNION ALL
@@ -40,14 +48,14 @@ USE DATABASE PERM_CONE;
 
 SHOW SCHEMAS;
 
-USE SCHEMA marketing;
+USE SCHEMA sales_schema;
 
 SHOW TABLES;
 
 SELECT * FROM INFORMATION_SCHEMA.TABLE_STORAGE_METRICS;
 
-SELECT * FROM customer_demo;
+SELECT * FROM customer_demo2;
 
-SELECT * FROM customer_tt_demo;
+--SELECT * FROM customer_tt_demo;
 
 ALTER TABLE customer_demo SWAP WITH customer_tt_demo;
