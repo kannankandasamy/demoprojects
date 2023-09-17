@@ -1,0 +1,6 @@
+ma_file = sc.textFile("hdfs:///user/kanna/data/mark_antony.txt")
+ma_data_map = ma_file.flatMap(lambda x:x.split(" ")).map(lambda w:(w,1))
+ma_data_count = ma_data_map.reduceByKey(lambda a,b:a+b)
+ma_data_report = ma_data_count.sortByKey(ascending=False).map(lambda k:k[1])
+ma_df = ma_data_report.toDF(["Keyword","ActualCount"])
+ma_df.coalesce(1).write.csv("hdfs:///user/kanna/data/mark_antony")

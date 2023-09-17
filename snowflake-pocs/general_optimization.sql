@@ -16,3 +16,6 @@ create warehouse SALES_WH
 ;
 
 --Check remote data spills in network - shows warehouse is not rightly sized
+
+describe warehouse SALES_WH;
+
